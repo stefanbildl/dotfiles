@@ -66,6 +66,10 @@ apply_stow_modules() {
 
 # Main script logic
 main() {
+  echo -e "${YELLOW}Installing starship.rs...${NC}"
+  # install starhsip
+  curl -sS https://starship.rs/install.sh | sh
+
   # Check if stow is installed
   if ! command_exists "stow"; then
     install_stow
