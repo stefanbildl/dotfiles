@@ -103,7 +103,7 @@ apply_stow_modules() {
   for module in */; do
     if [ -d "$module" ]; then
       echo -e "${GREEN}Applying module: $module${NC}"
-      stow -v "$module" || { echo -e "${RED}Failed to apply module: $module${NC}"; exit 1; }
+      stow -v "$module" --adopt || { echo -e "${RED}Failed to apply module: $module${NC}"; exit 1; }
     fi
   done
 
@@ -113,10 +113,6 @@ apply_stow_modules() {
 
 # Main script logic
 main() {
-  echo -e "${YELLOW}Installing starship.rs...${NC}"
-  # install starhsip
-  curl -sS https://starship.rs/install.sh | sh
-
   # install zellij
   install_zellij
 
