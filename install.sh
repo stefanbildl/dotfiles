@@ -46,6 +46,52 @@ install_stow() {
   echo -e "${GREEN}stow installed successfully!${NC}"
 }
 
+install_zellij() {
+  echo -e "${YELLOW}Installing zellij...${NC}"
+  # Get the architecture of the machine
+  arch=$(uname -m)
+  os=$(uname -s)
+
+  # Download the Zellij binary
+  if [ "$os" == "Darwin" ]; then
+    filename="zellij-${arch}-apple-darwin.tar.gz"
+    url="https://github.com/zellij-org/zellij/releases/latest/download/$filename"
+    echo "Downloading Zellij binary for macOS..."
+    curl -LO "$url"
+  else
+    if [ "$os" == "Linux" ]; then
+      filename="zellij-${arch}-unknown-linux-musl.tar.gz"
+      url="https://github.com/zellij-org/zellij/releases/latest/download/$filename"
+      echo "Downloading Zellij binary for Linux..."
+      curl -LO "$url"
+    else
+      echo "Unsupported OS: $os"
+    fi
+  fi
+
+  # Uncompress the Zellij binary
+  echo "Uncompressing Zellij binary..."
+  tar -xf "$filename"
+
+  # Move the Zellij binary to the /bin directory
+  echo "Moving Zellij binary to /bin directory..."
+
+  sudo mkdir -p /opt/zellij/
+  sudo mv "./zellij" /opt/zellij/zellij
+  sudo ln -s /opt/zellij/zellij /bin/zellij
+
+  # Remove the .tar.gz file
+  echo "Removing .tar.gz file..."
+  rm "$filename"
+
+  # Check if the Zellij binary exists
+  if [ -f "/bin/zellij" ]; then
+    echo "Zellij binary installed successfully!"
+  else
+    echo "Zellij binary not installed successfully!"
+  fi
+}
+
 # Function to apply all stow modules
 apply_stow_modules() {
   echo -e "${YELLOW}Applying stow modules...${NC}"
@@ -64,11 +110,15 @@ apply_stow_modules() {
   echo -e "${GREEN}All stow modules applied successfully!${NC}"
 }
 
+
 # Main script logic
 main() {
   echo -e "${YELLOW}Installing starship.rs...${NC}"
   # install starhsip
   curl -sS https://starship.rs/install.sh | sh
+
+  # install zellij
+  install_zellij
 
   # Check if stow is installed
   if ! command_exists "stow"; then
