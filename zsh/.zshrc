@@ -1,3 +1,5 @@
+eval "$(zellij setup --generate-auto-start zsh)"
+
 ZSH_CUSTOM="$HOME/.zsh-custom"
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -24,4 +26,3 @@ alias vim=nvim
 # load my env
 [ -s "./environment.sh" ] && \. "./environment.sh"  
 
-eval "$(zellij setup --generate-auto-start zsh)"
