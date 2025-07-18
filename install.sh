@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to install stow and apply all stow modules in the dotfiles repo
 
