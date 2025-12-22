@@ -55,11 +55,11 @@ install_zellij() {
   # try to install zellij with package manager
   if install zellij; then
     return 0
+  else
+    echo -e "${YELLOW}Could not install zellij with a package manager${NC}"
   fi
 
-
-
-  echo -e "${YELLOW}Installing zellij...${NC}"
+  echo -e "${YELLOW}Installing zellij via script...${NC}"
   # Get the architecture of the machine
   arch=$(uname -m)
   os=$(uname -s)
@@ -88,11 +88,11 @@ install_zellij() {
   # Move the Zellij binary to the /bin directory
   echo "Moving Zellij binary to /bin directory..."
 
+  sudo rm -rf /opt/zellij
   sudo mkdir -p /opt/zellij/
-  sudo mv "./zellij" /opt/zellij/zellij
+  chmod +x ./zellij
+  sudo mv "./zellij" /opt/zellij/
   sudo ln -s /opt/zellij/zellij /bin/zellij
-
-  chmod +x /bin/zellij
 
   # Remove the .tar.gz file
   echo "Removing .tar.gz file..."
@@ -178,10 +178,17 @@ main() {
     exit 1
   fi
 
+  if ! install zoxide; then
+    echo "${RED}zoxide could not be installed...$NC"
+    exit 1
+  fi
+
   if install stow; then
     apply_stow_modules
   fi
 }
+
+
 
 # Run the script
 main
