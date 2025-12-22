@@ -136,7 +136,7 @@ install_fish() {
   fi
 
   echo -e "${YELLOW}changing your shell to fish 🐟...${NC}"
-  chsh -s "$(which fish)"
+  sudo chsh -s "$(which fish)" "$USER"
 }
 
 prepare_git() {
