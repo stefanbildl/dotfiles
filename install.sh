@@ -188,6 +188,11 @@ main() {
     exit 1
   fi
 
+  if ! install fzf; then 
+    echo "${RED}fzf could not be installed...$NC"
+    exit 1
+  fi
+
   if ! install_eza; then 
     echo "${RED}eza could not be installed...$NC"
     exit 1
