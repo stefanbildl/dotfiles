@@ -16,6 +16,15 @@ install() {
     return 0
   fi
 
+  if ! command_exists nvim; then
+    ./install-nvim.sh
+    if ! $?; then
+      echo -e "${RED}Neovim was not installed.${NC}"
+    fi
+  else
+    echo -e "${GREEN}Neovim is already installed.${NC}"
+  fi
+
   if command_exists "apt-get"; then
     # Debian/Ubuntu-based systems
     sudo apt-get update
@@ -66,27 +75,27 @@ install_zellij() {
   if [ "$os" == "Darwin" ]; then
     filename="zellij-${arch}-apple-darwin.tar.gz"
     url="https://github.com/zellij-org/zellij/releases/latest/download/$filename"
-    echo "Downloading Zellij binary for macOS..."
+    echo -e "Downloading Zellij binary for macOS..."
     curl -LO "$url"
   else
     if [ "$os" == "Linux" ]; then
       filename="zellij-${arch}-unknown-linux-musl.tar.gz"
       url="https://github.com/zellij-org/zellij/releases/latest/download/$filename"
-      echo "Downloading Zellij binary for Linux..."
+      echo -e "Downloading Zellij binary for Linux..."
       curl -LO "$url"
     else
-      echo "Unsupported OS: $os"
+      echo -e "Unsupported OS: $os"
     fi
   fi
 
   # Uncompress the Zellij binary
-  echo "Uncompressing Zellij binary..."
+  echo -e "Uncompressing Zellij binary..."
   mkdir -p zellij_download
   tar -xf "$filename" -C zellij_download
   target="./zellij_download/zellij"
 
   # Move the Zellij binary to the /bin directory
-  echo "Moving Zellij binary to /bin directory..."
+  echo -e "Moving Zellij binary to /bin directory..."
 
   sudo rm -rf /opt/zellij
   sudo mkdir -p /opt/zellij/
@@ -96,14 +105,14 @@ install_zellij() {
   sudo ln -s /opt/zellij/zellij /bin/zellij
 
   # Remove the .tar.gz file
-  echo "Removing .tar.gz file..."
+  echo -e "Removing .tar.gz file..."
   rm "$filename"
 
   # Check if the Zellij binary exists
   if [ -f "/bin/zellij" ]; then
-    echo "Zellij binary installed successfully!"
+    echo -e "Zellij binary installed successfully!"
   else
-    echo "Zellij binary not installed successfully!"
+    echo -e "Zellij binary not installed successfully!"
   fi
 }
 
@@ -184,6 +193,11 @@ install_fzf() {
   if command -v dpkg &>/dev/null && dpkg -l fzf &>/dev/null; then
     sudo apt remove -y fzf && sudo apt autoremove -y
   fi
+
+  if command_exists fzf; then 
+    echo -e "${GREEN}fzf is already installed...$NC"
+    return 0
+  fi
   # Install fzf using different package managers
   case $(uname -s) in
     Linux*)
@@ -198,7 +212,7 @@ install_fzf() {
       elif command -v xbps-install &>/dev/null; then
         sudo xbps-install -S fzf
       else
-        echo "No supported package manager found. Installing via git..."
+        echo -e "No supported package manager found. Installing via git..."
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
       fi
       ;;
@@ -206,11 +220,11 @@ install_fzf() {
       if command -v brew &>/dev/null; then
         brew install fzf && $(brew --prefix)/opt/fzf/install
       else
-        echo "Homebrew not found. Please install it first."
+        echo -e "Homebrew not found. Please install it first."
       fi
       ;;
     *)
-      echo "Unsupported OS"
+      echo -e "Unsupported OS"
       exit 1
       ;;
   esac
@@ -221,37 +235,37 @@ main() {
   if ! install wget; then exit 1; fi
 
   if ! prepare_git; then 
-    echo "${RED}initialization failed for this repo...$NC"
+    echo -e "${RED}initialization failed for this repo...$NC"
     exit 1
   fi
 
   if ! install_fzf; then 
-    echo "${RED}fzf could not be installed...$NC"
+    echo -e "${RED}fzf could not be installed...$NC"
     exit 1
   fi
 
   if ! install_eza; then 
-    echo "${RED}eza could not be installed...$NC"
+    echo -e "${RED}eza could not be installed...$NC"
     exit 1
   fi
 
   if ! install_fish; then
-    echo "${RED}fish could not be installed...$NC"
+    echo -e "${RED}fish could not be installed...$NC"
     exit 1
   fi
 
   if ! install_starship; then
-    echo "${RED}starship could not be installed...$NC"
+    echo -e "${RED}starship could not be installed...$NC"
     exit 1
   fi
 
   if ! install_zellij; then
-    echo "${RED}zellij could not be installed...$NC"
+    echo -e "${RED}zellij could not be installed...$NC"
     exit 1
   fi
 
   if ! install zoxide; then
-    echo "${RED}zoxide could not be installed...$NC"
+    echo -e "${RED}zoxide could not be installed...$NC"
     exit 1
   fi
 
