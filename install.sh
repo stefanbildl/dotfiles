@@ -38,7 +38,7 @@ install() {
   fi
 
   if ! command_exists "$1"; then
-    echo -e "${RED}Failed to install $1. Please install it manually and try again.${NC}"
+    echo -e "${RED}Failed to install $1 via package manager.${NC}"
     return 1
   fi
 
@@ -55,11 +55,9 @@ install_zellij() {
   # try to install zellij with package manager
   if install zellij; then
     return 0
-  else
-    echo -e "${YELLOW}Could not install zellij with a package manager${NC}"
   fi
 
-  echo -e "${YELLOW}Installing zellij via script...${NC}"
+  echo -e "${YELLOW}Install via package manager failed - installing zellij via script...${NC}"
   # Get the architecture of the machine
   arch=$(uname -m)
   os=$(uname -s)
@@ -83,7 +81,7 @@ install_zellij() {
 
   # Uncompress the Zellij binary
   echo "Uncompressing Zellij binary..."
-  tar -xf "$filename" zellij_download
+  tar -xf "$filename" -C zellij_download
 
   target="./zellij_download/zellij"
 
