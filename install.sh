@@ -47,6 +47,11 @@ install_stow() {
 }
 
 install_zellij() {
+  if command -v zellij >/dev/null 2>&1; then
+    echo -e "${GREEN}zellij is already installed.${NC}"
+    return
+  fi
+
   echo -e "${YELLOW}Installing zellij...${NC}"
   # Get the architecture of the machine
   arch=$(uname -m)
@@ -126,6 +131,11 @@ main() {
   # Apply all stow modules
   apply_stow_modules
 }
+
+
+# ensure git submodules are setup correctly
+git submodule init
+git submodule update
 
 # Run the script
 main
