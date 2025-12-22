@@ -12,7 +12,7 @@ command_exists() {
 
 install() {
   if command_exists "$1"; then
-    echo -e "$1 is already installed.${NC}"
+    echo -e "${GREEN}$1 is already installed.${NC}"
     return 0
   fi
 
@@ -125,12 +125,12 @@ install_fish() {
   set -e
   install fish
   if [ "$SHELL" == "/bin/fish" ]; then
-    echo -e "${REEN}fish 🐟 is already your default shell...${NC}"
+    echo -e "${GREEN}fish 🐟 is already your default shell...${NC}"
     return 0
   fi
 
   if [ "$SHELL" == "$(which fish)" ]; then
-    echo -e "${REEN}fish 🐟 is already your default shell...${NC}"
+    echo -e "${GREEN}fish 🐟 is already your default shell...${NC}"
     return 0
   fi
 
@@ -146,6 +146,14 @@ prepare_git() {
   git submodule update
 }
 
+install_starship() {
+  if ! command_exists starship; then 
+    curl -sS https://starship.rs/install.sh | sh
+  else
+    echo -e "${GREEN}starship is already installed.${NC}"
+  fi
+}
+
 # Main script logic
 main() {
   if ! prepare_git; then 
@@ -154,6 +162,11 @@ main() {
   fi
   if ! install_fish; then
     echo "${RED}fish could not be installed...$NC"
+    exit 1
+  fi
+
+  if ! install_starship; then
+    echo "${RED}starship could not be installed...$NC"
     exit 1
   fi
 
