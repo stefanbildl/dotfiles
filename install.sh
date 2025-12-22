@@ -47,16 +47,17 @@ install() {
 
 
 install_zellij() {
+  if command_exists zellij; then
+    echo -e "${GREEN}zellij is already installed.${NC}"
+    return 0
+  fi
+
   # try to install zellij with package manager
   if install zellij; then
     return 0
   fi
 
 
-  if command -v zellij >/dev/null 2>&1; then
-    echo -e "${GREEN}zellij is already installed.${NC}"
-    return
-  fi
 
   echo -e "${YELLOW}Installing zellij...${NC}"
   # Get the architecture of the machine
@@ -90,6 +91,8 @@ install_zellij() {
   sudo mkdir -p /opt/zellij/
   sudo mv "./zellij" /opt/zellij/zellij
   sudo ln -s /opt/zellij/zellij /bin/zellij
+
+  chmod +x /bin/zellij
 
   # Remove the .tar.gz file
   echo "Removing .tar.gz file..."
