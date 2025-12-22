@@ -179,6 +179,43 @@ install_eza() {
   sudo mv eza /usr/local/bin/eza
 }
 
+install_fzf() {
+  # Uninstall fzf if installed via apt
+  if command -v dpkg &>/dev/null && dpkg -l fzf &>/dev/null; then
+    sudo apt remove -y fzf && sudo apt autoremove -y
+  fi
+  # Install fzf using different package managers
+  case $(uname -s) in
+    Linux*)
+      if command -v pacman &>/dev/null; then
+        sudo pacman -S fzf
+      elif command -v dnf &>/dev/null; then
+        sudo dnf install fzf
+      elif command -v zypper &>/dev/null; then
+        sudo zypper install fzf
+      elif command -v apk &>/dev/null; then
+        sudo apk add fzf
+      elif command -v xbps-install &>/dev/null; then
+        sudo xbps-install -S fzf
+      else
+        echo "No supported package manager found. Installing via git..."
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+      fi
+      ;;
+    Darwin*)
+      if command -v brew &>/dev/null; then
+        brew install fzf && $(brew --prefix)/opt/fzf/install
+      else
+        echo "Homebrew not found. Please install it first."
+      fi
+      ;;
+    *)
+      echo "Unsupported OS"
+      exit 1
+      ;;
+  esac
+}
+
 # Main script logic
 main() {
   if ! install wget; then exit 1; fi
@@ -188,7 +225,7 @@ main() {
     exit 1
   fi
 
-  if ! install fzf; then 
+  if ! install_fzf; then 
     echo "${RED}fzf could not be installed...$NC"
     exit 1
   fi
