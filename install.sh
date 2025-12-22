@@ -157,12 +157,39 @@ install_starship() {
   fi
 }
 
+install_eza() {
+  if command_exists eza; then
+    echo -e "${GREEN}eza is already installed.${NC}"
+    return 0
+  fi
+
+  if command_exists pacman; then
+    sudo pacman -S --noconfirm eza
+    return
+  fi
+
+  echo -e "${YELLOW}Installing eza...${NC}"
+  set -e
+  wget -c https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz -O - | tar xz
+  sudo chmod +x eza
+  sudo chown root:root eza
+  sudo mv eza /usr/local/bin/eza
+}
+
 # Main script logic
 main() {
+  if ! install wget; then exit 1; fi
+
   if ! prepare_git; then 
     echo "${RED}initialization failed for this repo...$NC"
     exit 1
   fi
+
+  if ! install_eza; then 
+    echo "${RED}eza could not be installed...$NC"
+    exit 1
+  fi
+
   if ! install_fish; then
     echo "${RED}fish could not be installed...$NC"
     exit 1
