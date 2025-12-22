@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Script to install stow and apply all stow modules in the dotfiles repo
-
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -13,40 +11,49 @@ command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
-# Function to install stow
-install_stow() {
-  echo -e "${YELLOW}Installing stow...${NC}"
+install() {
+  if command_exists "$1"; then
+    echo -e "$1 is already installed.${NC}"
+    return 0
+  fi
 
   if command_exists "apt-get"; then
     # Debian/Ubuntu-based systems
     sudo apt-get update
-    sudo apt-get install -y stow
+    sudo apt-get install -y "$1"
   elif command_exists "brew"; then
     # macOS with Homebrew
-    brew install stow
+    brew install "$1"
   elif command_exists "pacman"; then
     # Arch-based systems
-    sudo pacman -S --noconfirm stow
+    sudo pacman -S --noconfirm "$1"
   elif command_exists "dnf"; then
     # Fedora-based systems
-    sudo dnf install -y stow
+    sudo dnf install -y "$1"
   elif command_exists "zypper"; then
     # openSUSE-based systems
-    sudo zypper install -y stow
+    sudo zypper install -y "$1"
   else
     echo -e "${RED}Could not detect a supported package manager. Please install stow manually.${NC}"
-    exit 1
+    return 1
   fi
 
-  if ! command_exists "stow"; then
-    echo -e "${RED}Failed to install stow. Please install it manually and try again.${NC}"
-    exit 1
+  if ! command_exists "$1"; then
+    echo -e "${RED}Failed to install $1. Please install it manually and try again.${NC}"
+    return 1
   fi
 
-  echo -e "${GREEN}stow installed successfully!${NC}"
+  return 0
 }
 
+
 install_zellij() {
+  # try to install zellij with package manager
+  if install zellij; then
+    return 0
+  fi
+
+
   if command -v zellij >/dev/null 2>&1; then
     echo -e "${GREEN}zellij is already installed.${NC}"
     return
@@ -100,7 +107,6 @@ install_zellij() {
 # Function to apply all stow modules
 apply_stow_modules() {
   echo -e "${YELLOW}Applying stow modules...${NC}"
-
   # Change to the directory where this script is located
   cd "$(dirname "${BASH_SOURCE[0]}")" || { echo -e "${RED}Failed to change to script directory.${NC}"; exit 1; }
 
@@ -116,26 +122,51 @@ apply_stow_modules() {
 }
 
 
-# Main script logic
-main() {
-  # install zellij
-  install_zellij
-
-  # Check if stow is installed
-  if ! command_exists "stow"; then
-    install_stow
-  else
-    echo -e "${GREEN}stow is already installed.${NC}"
+install_fish() {
+  set -e
+  install fish
+  if [ "$SHELL" == "/bin/fish" ]; then
+    echo -e "${REEN}fish 🐟 is already your default shell...${NC}"
+    return 0
   fi
 
-  # Apply all stow modules
-  apply_stow_modules
+  if [ "$SHELL" == "$(which fish)" ]; then
+    echo -e "${REEN}fish 🐟 is already your default shell...${NC}"
+    return 0
+  fi
+
+  echo -e "${YELLOW}changing your shell to fish 🐟...${NC}"
+  chsh -s "$(which fish)"
 }
 
+prepare_git() {
+  set -e
+  install git
+  # ensure git submodules are setup correctly
+  git submodule init
+  git submodule update
+}
 
-# ensure git submodules are setup correctly
-git submodule init
-git submodule update
+# Main script logic
+main() {
+  if ! prepare_git; then 
+    echo "${RED}initialization failed for this repo...$NC"
+    exit 1
+  fi
+  if ! install_fish; then
+    echo "${RED}fish could not be installed...$NC"
+    exit 1
+  fi
+
+  if ! install_zellij; then
+    echo "${RED}zellij could not be installed...$NC"
+    exit 1
+  fi
+
+  if install stow; then
+    apply_stow_modules
+  fi
+}
 
 # Run the script
 main
