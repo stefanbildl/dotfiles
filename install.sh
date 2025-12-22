@@ -81,8 +81,8 @@ install_zellij() {
 
   # Uncompress the Zellij binary
   echo "Uncompressing Zellij binary..."
+  mkdir -p zellij_download
   tar -xf "$filename" -C zellij_download
-
   target="./zellij_download/zellij"
 
   # Move the Zellij binary to the /bin directory
@@ -92,6 +92,7 @@ install_zellij() {
   sudo mkdir -p /opt/zellij/
   chmod +x "$target"
   sudo mv "$target" /opt/zellij/
+  rm /bin/zellij
   sudo ln -s /opt/zellij/zellij /bin/zellij
 
   # Remove the .tar.gz file
@@ -216,8 +217,6 @@ main() {
     apply_stow_modules
   fi
 }
-
-
 
 # Run the script
 main
