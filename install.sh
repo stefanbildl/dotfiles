@@ -114,7 +114,7 @@ apply_stow_modules() {
   for module in */; do
     if [ -d "$module" ]; then
       echo -e "${GREEN}Applying module: $module${NC}"
-      stow -v "$module" --adopt || { echo -e "${RED}Failed to apply module: $module${NC}"; exit 1; }
+      stow --adopt -v "$module"  || { echo -e "${RED}Failed to apply module: $module${NC}"; }
     fi
   done
 
