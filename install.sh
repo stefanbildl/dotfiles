@@ -16,14 +16,6 @@ install() {
     return 0
   fi
 
-  if ! command_exists nvim; then
-    ./install-nvim.sh
-    if ! $?; then
-      echo -e "${RED}Neovim was not installed.${NC}"
-    fi
-  else
-    echo -e "${GREEN}Neovim is already installed.${NC}"
-  fi
 
   if command_exists "apt-get"; then
     # Debian/Ubuntu-based systems
@@ -233,6 +225,18 @@ install_fzf() {
 # Main script logic
 main() {
   if ! install wget; then exit 1; fi
+
+  if ! command_exists nvim; then
+    echo -e "${YELLOW}Installing neovim...${NC}"
+    ./install-nvim.sh
+    if ! $?; then
+      echo -e "${RED}Neovim was not installed.${NC}"
+    else 
+      echo -e "${GREEN}Neovim installed.${NC}"
+    fi
+  else
+    echo -e "${GREEN}Neovim is already installed.${NC}"
+  fi
 
   if ! prepare_git; then 
     echo -e "${RED}initialization failed for this repo...$NC"
