@@ -83,15 +83,17 @@ install_zellij() {
 
   # Uncompress the Zellij binary
   echo "Uncompressing Zellij binary..."
-  tar -xf "$filename"
+  tar -xf "$filename" zellij_download
+
+  target="./zellij_download/zellij"
 
   # Move the Zellij binary to the /bin directory
   echo "Moving Zellij binary to /bin directory..."
 
   sudo rm -rf /opt/zellij
   sudo mkdir -p /opt/zellij/
-  chmod +x ./zellij
-  sudo mv "./zellij" /opt/zellij/
+  chmod +x "$target"
+  sudo mv "$target" /opt/zellij/
   sudo ln -s /opt/zellij/zellij /bin/zellij
 
   # Remove the .tar.gz file
@@ -170,7 +172,9 @@ install_eza() {
 
   echo -e "${YELLOW}Installing eza...${NC}"
   set -e
-  wget -c https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz -O - | tar xz
+
+  arch=$(uname -m)
+  wget -c https://github.com/eza-community/eza/releases/latest/download/eza_${arch}-unknown-linux-gnu.tar.gz -O - | tar xz
   sudo chmod +x eza
   sudo chown root:root eza
   sudo mv eza /usr/local/bin/eza
