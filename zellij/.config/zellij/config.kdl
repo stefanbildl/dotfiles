@@ -146,7 +146,7 @@ keybinds clear-defaults=true {
         bind "Ctrl h" { SwitchToMode "move"; }
     }
     shared_except "locked" "session" {
-        bind "Ctrl #" { SwitchToMode "session"; }
+        bind "Ctrl Alt s" { SwitchToMode "session"; }
     }
     shared_except "locked" "scroll" {
         bind "Alt left" { MoveFocusOrTab "left"; }
